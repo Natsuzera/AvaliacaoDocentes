@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <title>Análise de Docente</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .gauge {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            position: relative;
+        }
+        
+        .card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .card-header {
+            background-color: #222;
+            border-bottom: 1px solid #333;
+            padding: 15px;
+        }
+        
+        .card-title {
+            color: #fff;
+            margin: 0;
+            font-size: 1.25rem;
+        }
+        
+        .gauge-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .gauge-label {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .btn-back {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        
+        .btn-back:hover {
+            background-color: #444;
+            color: #fff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+    <h1 class="text-center mb-5">Análise do Docente: {{ estatisticas.nome_docente }}</h1>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Postura Profissional</h3>
+                </div>
+                <div class="card-body">
+                    <div class="gauge">
+                        <canvas id="posturaGauge"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas.postura_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">
+                            Min: {{ "%.2f"|format(estatisticas.postura_profissional_media.min) }} | 
+                            Max: {{ "%.2f"|format(estatisticas.postura_profissional_media.max) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Atuação Profissional</h3>
+                </div>
+                <div class="card-body">
+                    <div class="gauge">
+                        <canvas id="atuacaoGauge"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas.atuacao_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">
+                            Min: {{ "%.2f"|format(estatisticas.atuacao_profissional_media.min) }} | 
+                            Max: {{ "%.2f"|format(estatisticas.atuacao_profissional_media.max) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Progressão ao longo dos anos</h3>
+        </div>
+        <div class="card-body">
+            <div class="chart-container">
+                <canvas id="progressionChart"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <a href="{{ url_for('index') }}" class="btn-back">Voltar</a>
+
+    <script>
+        // Configuração dos gráficos gauge
+        function createGauge(canvasId, value, maxValue, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [value, maxValue - value],
+                        backgroundColor: [color, '#2a2a2a'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    circumference: 180,
+                    rotation: -90,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+
+        // Criação dos gráficos gauge
+        createGauge('posturaGauge', 
+            {{ estatisticas.postura_profissional_media.mean }}, 
+            {{ estatisticas.postura_profissional_media.max }}, 
+            '#4ade80'
+        );
+        
+        createGauge('atuacaoGauge', 
+            {{ estatisticas.atuacao_profissional_media.mean }}, 
+            {{ estatisticas.atuacao_profissional_media.max }}, 
+            '#60a5fa'
+        );
+
+        // Configuração do gráfico de linha
+        const progressionCtx = document.getElementById('progressionChart').getContext('2d');
+        new Chart(progressionCtx, {
+            type: 'line',
+            data: {
+                labels: {{ anos|tojson }},
+                datasets: [{
+                    label: 'Postura Profissional',
+                    data: {{ postura_values|tojson }},
+                    borderColor: '#4ade80',
+                    backgroundColor: '#4ade8020',
+                    tension: 0.4,
+                    fill: true
+                }, {
+                    label: 'Atuação Profissional',
+                    data: {{ atuacao_values|tojson }},
+                    borderColor: '#60a5fa',
+                    backgroundColor: '#60a5fa20',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 7,
+                        max: 10,
+                        grid: {
+                            color: '#333'
+                        },
+                        ticks: {
+                            color: '#fff'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333'
+                        },
+                        ticks: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <title>Seleção de Docente</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .select-container {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .select-title {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .select-subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+
+        .list-group {
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .list-group-item {
+            background-color: #2a2a2a;
+            border: 1px solid #333;
+            margin-bottom: 0.5rem;
+            border-radius: 8px !important;
+            transition: all 0.3s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: #333;
+            transform: translateX(5px);
+        }
+
+        .list-group-item a {
+            color: #4ade80;
+            text-decoration: none;
+            display: block;
+            padding: 1rem;
+            font-weight: 500;
+        }
+
+        .list-group-item a:hover {
+            color: #22c55e;
+        }
+
+        .btn-back {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #444;
+            color: #fff;
+            text-decoration: none;
+            transform: translateX(-5px);
+        }
+
+        .search-term {
+            color: #4ade80;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="select-container">
+            <h1 class="select-title">Selecione o Docente</h1>
+            <p class="select-subtitle">
+                Foram encontrados vários candidatos para "<span class="search-term">{{ nome_busca }}</span>".<br>
+                Por favor, selecione o docente desejado:
+            </p>
+            <ul class="list-group">
+                {% for professor in professores %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('select', teacher_name=professor) }}">
+                            {{ professor }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="text-center">
+                <a href="{{ url_for('index') }}" class="btn-back">
+                    &larr; Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
