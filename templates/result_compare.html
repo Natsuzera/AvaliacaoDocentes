@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparação de Docentes</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+        
+        .container {
+            padding: 15px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+        }
+
+        .comparison-title {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 1rem;
+        }
+
+        .professor-card {
+            background-color: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            padding: 1rem;
+        }
+
+        .professor-name {
+            color: #4ade80;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .gauge {
+            width: 100%;
+            max-width: 200px;
+            height: auto;
+            margin: 20px auto;
+            position: relative;
+            aspect-ratio: 1;
+        }
+
+        .gauge-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-weight: bold;
+        }
+
+        .gauge-label {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            color: #888;
+        }
+
+        .chart-container {
+            height: 400px;
+            margin: 20px 0;
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 1rem;
+        }
+
+        .metric-title {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .btn-back {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #444;
+            color: #fff;
+            text-decoration: none;
+            transform: translateX(-5px);
+        }
+
+        .comparison-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-card {
+            background-color: #2a2a2a;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .comparison-chart {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="comparison-header">
+            <h1 class="comparison-title">Comparação de Docentes</h1>
+            <div class="professor-names">
+                <h2>{{ estatisticas1.nome_docente }} vs {{ estatisticas2.nome_docente }}</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Primeiro Professor -->
+            <div class="col-md-6">
+                <div class="professor-card">
+                    <h3 class="professor-name">{{ estatisticas1.nome_docente }}</h3>
+                    <div class="gauge">
+                        <canvas id="posturaGauge1"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas1.postura_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">Postura Profissional</div>
+                    </div>
+                    <div class="gauge">
+                        <canvas id="atuacaoGauge1"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas1.atuacao_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">Atuação Profissional</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segundo Professor -->
+            <div class="col-md-6">
+                <div class="professor-card">
+                    <h3 class="professor-name">{{ estatisticas2.nome_docente }}</h3>
+                    <div class="gauge">
+                        <canvas id="posturaGauge2"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas2.postura_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">Postura Profissional</div>
+                    </div>
+                    <div class="gauge">
+                        <canvas id="atuacaoGauge2"></canvas>
+                        <div class="gauge-value">
+                            {{ "%.2f"|format(estatisticas2.atuacao_profissional_media.mean) }}
+                        </div>
+                        <div class="gauge-label">Atuação Profissional</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico de Comparação -->
+        <div class="comparison-chart">
+            <h3 class="metric-title">Progressão ao Longo dos Anos</h3>
+            <div class="chart-container">
+                <canvas id="comparisonChart"></canvas>
+            </div>
+        </div>
+
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn-back">&larr; Voltar</a>
+        </div>
+    </div>
+
+    <script>
+        // Função para criar gauge
+        function createGauge(canvasId, value, maxValue, color) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [value, maxValue - value],
+                        backgroundColor: [color, '#2a2a2a'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    circumference: 180,
+                    rotation: -90,
+                    cutout: '70%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: true
+                }
+            });
+        }
+
+        // Criar gauges para ambos os professores
+        createGauge('posturaGauge1', 
+            {{ estatisticas1.postura_profissional_media.mean }}, 
+            {{ estatisticas1.postura_profissional_media.max }}, 
+            '#4ade80'
+        );
+        
+        createGauge('atuacaoGauge1', 
+            {{ estatisticas1.atuacao_profissional_media.mean }}, 
+            {{ estatisticas1.atuacao_profissional_media.max }}, 
+            '#60a5fa'
+        );
+
+        createGauge('posturaGauge2', 
+            {{ estatisticas2.postura_profissional_media.mean }}, 
+            {{ estatisticas2.postura_profissional_media.max }}, 
+            '#4ade80'
+        );
+        
+        createGauge('atuacaoGauge2', 
+            {{ estatisticas2.atuacao_profissional_media.mean }}, 
+            {{ estatisticas2.atuacao_profissional_media.max }}, 
+            '#60a5fa'
+        );
+
+        // Gráfico de comparação
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'line',
+            data: {
+                labels: {{ anos|tojson }},
+                datasets: [
+                    {
+                        label: '{{ estatisticas1.nome_docente }} - Postura',
+                        data: {{ postura_values1|tojson }},
+                        borderColor: '#4ade80',
+                        backgroundColor: '#4ade8020',
+                        tension: 0.4
+                    },
+                    {
+                        label: '{{ estatisticas1.nome_docente }} - Atuação',
+                        data: {{ atuacao_values1|tojson }},
+                        borderColor: '#60a5fa',
+                        backgroundColor: '#60a5fa20',
+                        tension: 0.4
+                    },
+                    {
+                        label: '{{ estatisticas2.nome_docente }} - Postura',
+                        data: {{ postura_values2|tojson }},
+                        borderColor: '#f472b6',
+                        backgroundColor: '#f472b620',
+                        tension: 0.4
+                    },
+                    {
+                        label: '{{ estatisticas2.nome_docente }} - Atuação',
+                        data: {{ atuacao_values2|tojson }},
+                        borderColor: '#c084fc',
+                        backgroundColor: '#c084fc20',
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 7,
+                        max: 10,
+                        grid: {
+                            color: '#333'
+                        },
+                        ticks: {
+                            color: '#fff'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: '#333'
+                        },
+                        ticks: {
+                            color: '#fff'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#fff'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

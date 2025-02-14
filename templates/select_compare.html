@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <title>Seleção de Docentes para Comparação</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 1rem;
+        }
+        .select-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            width: 100%;
+            max-width: 800px;
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            margin: 1rem;
+        }
+        .select-title {
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        .select-subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+        .comparison-group {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+        .comparison-title {
+            color: #4ade80;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+        .list-group {
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .list-group-item {
+            background-color: #333;
+            border: 1px solid #444;
+            margin-bottom: 0.5rem;
+            border-radius: 8px !important;
+            transition: all 0.3s ease;
+        }
+        .list-group-item:hover {
+            background-color: #444;
+            transform: translateX(5px);
+        }
+        .list-group-item a {
+            color: #4ade80;
+            text-decoration: none;
+            display: block;
+            padding: 1rem;
+            font-weight: 500;
+        }
+        .list-group-item a:hover {
+            color: #22c55e;
+        }
+        .btn-back {
+            background-color: #333;
+            border: none;
+            color: #fff;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 1.5rem auto 0;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        .btn-back:hover {
+            background-color: #444;
+            color: #fff;
+            text-decoration: none;
+            transform: translateX(-5px);
+        }
+        .search-term {
+            color: #4ade80;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="select-container">
+        <h1 class="select-title">Selecione os Docentes</h1>
+        
+        <!-- Lista para o primeiro docente -->
+        {% if docente1_list %}
+        <div class="comparison-group">
+            <h2 class="comparison-title">Primeiro Docente: "{{ docente1_termo }}"</h2>
+            <ul class="list-group">
+                {% for professor in docente1_list %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('select_compare', 
+                            position='first', 
+                            teacher_name=professor, 
+                            other_teacher=docente2_selecionado,
+                            docente1_termo=docente1_termo,
+                            docente2_termo=docente2_termo) }}">
+                            {{ professor }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Lista para o segundo docente -->
+        {% if docente2_list %}
+        <div class="comparison-group">
+            <h2 class="comparison-title">Segundo Docente: "{{ docente2_termo }}"</h2>
+            <ul class="list-group">
+                {% for professor in docente2_list %}
+                    <li class="list-group-item">
+                        <a href="{{ url_for('select_compare', 
+                            position='second', 
+                            teacher_name=professor, 
+                            other_teacher=docente1_selecionado,
+                            docente1_termo=docente1_termo,
+                            docente2_termo=docente2_termo) }}">
+                            {{ professor }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- Botão de voltar -->
+        <div class="text-center">
+            <a href="{{ url_for('index') }}" class="btn-back">
+                &larr; Voltar
+            </a>
+        </div>
+    </div>
+</body>
+</html>
