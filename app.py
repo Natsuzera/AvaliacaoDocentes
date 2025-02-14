@@ -58,5 +58,9 @@ def select():
     return render_template('result.html', estatisticas=resultado['estatisticas'],
                            anos=anos, postura_values=postura_values, atuacao_values=atuacao_values)
 
+@app.route('/mais-informacoes')
+def mais_informacoes():
+    return render_template('mais_informacoes.html')
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5050)

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mais Informações - Busca de Docente</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .info-container {
+            background-color: #1a1a1a;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .info-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .info-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background-color: #2a2a2a;
+            border-radius: 8px;
+        }
+
+        .info-section h2 {
+            color: #4ade80;
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            margin-bottom: 1rem;
+        }
+
+        .info-section p {
+            color: #fff;
+            font-size: clamp(14px, 4vw, 16px);
+            line-height: 1.6;
+        }
+
+        .btn-back {
+            background-color: #4ade80;
+            border: none;
+            color: #000;
+            padding: clamp(0.8rem, 3vw, 1rem) 2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #22c55e;
+            color: #000;
+            text-decoration: none;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .info-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="info-container">
+            <h1 class="info-title">Mais Informações</h1>
+            
+            <div class="info-section">
+                <h2>Sobre os Dados</h2>
+                <p>Os dados apresentados neste sistema são referentes até o ano de 2023. Estamos trabalhando para disponibilizar atualizações mais recentes em breve.</p>
+            </div>
+
+            <div class="info-section">
+                <h2>Transparência e Interpretação</h2>
+                <p>Todos os dados exibidos neste sistema são informações públicas, disponibilizadas oficialmente pela própria instituição. É importante ressaltar que não estabelecemos critérios ou limiares para classificar o desempenho dos docentes.</p>
+                <p>A interpretação dos dados e a avaliação do desempenho docente são de responsabilidade individual de cada usuário que acessa estas informações. Nosso papel é apenas disponibilizar os dados de forma organizada e acessível.</p>
+            </div>
+
+            <div class="text-center">
+                <a href="{{ url_for('index') }}" class="btn-back">Voltar para Busca</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
